@@ -1,4 +1,4 @@
-class zeeWrapper {
+class ZeeWrapper {
     constructor(input, type) {
         if (!input || !input[Symbol.iterator]) {
             input = Array.from(input);
@@ -30,14 +30,14 @@ class zeeWrapper {
         if (typeof (callback) !== "function") {
             return this;
         }
-        return new zeeWrapper(mapYield(this.collection, callback), this.type);
+        return new ZeeWrapper(mapYield(this.collection, callback), this.type);
     }
 
     filter(predicate) {
         if (typeof (predicate) !== "function") {
             return this;
         }
-        return new zeeWrapper(filterYield(this.collection, predicate), this.type);
+        return new ZeeWrapper(filterYield(this.collection, predicate), this.type);
     }
 
     find(predicate) {
@@ -62,23 +62,40 @@ class zeeWrapper {
         return accumulator;
     }
 
+    join(seperator) {
+
+    }
+
     every(predicate) { }
     some(predicate) { }
 
     flat() { }
     flatMap() { }
-    includes(predicate) { }
+    includes(value) {
+        const el = this.find(el => Object.is(el, value));
+        return !Object.is(undefined);
+    }
     keys() { }
     reduceRight() { }
 
     take(number) { }
+    takeWhile(number) { }
     skip(number) { }
+    skipWhile(number) { }
+
+    nth() { }
+    first() { }
+    last() { }
+    head() { }
+    tail() { }
 
     sort(compare) {
-        if (!compare) {
-            compare = defaultCompare
-        }
+        const copy = Array.from(this.collection);
+        copy.sort(compare);
+        return new ZeeWrapper(copy, this.type);
     }
+
+    sortBy(predicate) { }
 
     value() {
         if (this.type === String) {
@@ -108,18 +125,8 @@ function* filterYield(collection, predicate) {
     }
 }
 
-function defaultCompare(a, b) {
-    if (a > b) {
-        return 1;
-    }
-    if (a < b) {
-        return -1;
-    }
-    return 0;
-}
-
-function zee(input) {
-    return new zeeWrapper(input);
+function z(input) {
+    return new ZeeWrapper(input);
 }
 
 
@@ -130,27 +137,31 @@ const simpleMap = new Map([['a', 1], ['b', 2], ['c', 3]]);
 const simpleSet = new Set([1, 2, 3]);
 
 
-let result1 = zee(intArray)
+let result1 = z(intArray)
     .filter(el => el === 3)
     .value();
 console.log("Result 1: ", result1);
 
 
-let result2 = zee(intArray)
+let result2 = z(intArray)
     .map(el => el * 2)
     .filter(el => el > 3)
     .reduce((acc, el) => acc + el, 0);
 console.log("Result 2: ", result2);
 
 
-let result3 = zee(simpleString)
+let result3 = z(simpleString)
     .filter(el => el !== "x")
     .value();
 console.log("Result 3: ", result3);
 
-let result4 = zee(simpleMap)
+let result4 = z(simpleMap)
     .filter(el => el[0] === 'a')
     .map(el => [el[0], 'yeesh'])
     .value();
 console.log("Result 4: ", result4);
+
+let result5 = z(simpleString)
+    .sort().value();
+console.log("Result 5: ", result5);
 
