@@ -1,4 +1,20 @@
-class ZeeWrapper {
+/**
+ * forEach() calls a provided callback function once for each element in an array in ascending order.
+ * @param {Iterable} collection 
+ * @param {Function} callback Function to execute on each element. 
+ */
+export function forEach(collection, callback) {
+    if (typeof (callback) !== "function") {
+        return collection;
+    }
+    let i = 0;
+    for (const element of collection) {
+        callback(element, i++, collection);
+    }
+    return collection;
+}
+
+class Chain {
     constructor(input, type) {
         if (!input || !input[Symbol.iterator]) {
             input = Array.from(input);
@@ -16,28 +32,20 @@ class ZeeWrapper {
         this.collection = input;
     }
 
-    forEach(callback) {
-        if (typeof (callback) !== "function") {
-            return this;
-        }
-        for (const element of this.collection) {
-            callback.call(this, element);
-        }
-        return this;
-    }
+    forEach = forEach.bind(this);
 
     map(callback) {
         if (typeof (callback) !== "function") {
             return this;
         }
-        return new ZeeWrapper(mapYield(this.collection, callback), this.type);
+        return new Chain(mapYield(this.collection, callback), this.type);
     }
 
     filter(predicate) {
         if (typeof (predicate) !== "function") {
             return this;
         }
-        return new ZeeWrapper(filterYield(this.collection, predicate), this.type);
+        return new Chain(filterYield(this.collection, predicate), this.type);
     }
 
     find(predicate) {
@@ -92,7 +100,7 @@ class ZeeWrapper {
     sort(compare) {
         const copy = Array.from(this.collection);
         copy.sort(compare);
-        return new ZeeWrapper(copy, this.type);
+        return new Chain(copy, this.type);
     }
 
     sortBy(predicate) { }
@@ -125,8 +133,8 @@ function* filterYield(collection, predicate) {
     }
 }
 
-function z(input) {
-    return new ZeeWrapper(input);
+function chain(input) {
+    return new Chain(input);
 }
 
 
@@ -137,31 +145,31 @@ const simpleMap = new Map([['a', 1], ['b', 2], ['c', 3]]);
 const simpleSet = new Set([1, 2, 3]);
 
 
-let result1 = z(intArray)
+let result1 = chain(intArray)
     .filter(el => el === 3)
     .value();
 console.log("Result 1: ", result1);
 
 
-let result2 = z(intArray)
+let result2 = chain(intArray)
     .map(el => el * 2)
     .filter(el => el > 3)
     .reduce((acc, el) => acc + el, 0);
 console.log("Result 2: ", result2);
 
 
-let result3 = z(simpleString)
+let result3 = chain(simpleString)
     .filter(el => el !== "x")
     .value();
 console.log("Result 3: ", result3);
 
-let result4 = z(simpleMap)
+let result4 = chain(simpleMap)
     .filter(el => el[0] === 'a')
     .map(el => [el[0], 'yeesh'])
     .value();
 console.log("Result 4: ", result4);
 
-let result5 = z(simpleString)
+let result5 = chain(simpleString)
     .sort().value();
 console.log("Result 5: ", result5);
 
