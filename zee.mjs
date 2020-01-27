@@ -1,17 +1,67 @@
+const defaultCallback = (x) => x;
+
 /**
- * forEach() calls a provided callback function once for each element in an array in ascending order.
- * @param {Iterable} collection 
+ * forEach() calls a provided callback function once for each element in an iterable in ascending order.
+ * @param {Iterable} collection An iterable (array, Map, Set)
  * @param {Function} callback Function to execute on each element. 
  */
-export function forEach(collection, callback) {
-    if (typeof (callback) !== "function") {
-        return collection;
-    }
+export function forEach(collection, callback = defaultCallback) {
     let i = 0;
     for (const element of collection) {
         callback(element, i++, collection);
     }
     return collection;
+}
+
+export function map(collection, callback = defaultCallback) {
+    collection = validate(collection);
+    const results = collect(collection, callback);
+    const type = getType(collection);
+    return reconstitute(results, type);
+}
+
+function* collect(collection, callback) {
+    for (const element of collection) {
+        yield callback(element);
+    }
+}
+
+function getType(input) {
+    if (typeof (input) === 'string') {
+        return String;
+    }
+    switch (input) {
+        case input instanceof Map:
+            return Map;
+        case input instanceof WeakMap:
+            return Map;
+        case input instanceof Set:
+            return Set;
+        case input instanceof WeakSet:
+            return WeakSet;
+        case input instanceof Promise:
+            return Promise;
+        case input instanceof Int8Array:
+            return Int8Array;
+        case input instanceof Uint8Array:
+            return Uint8Array;
+        case input instanceof Int16Array:
+            return Int16Array;
+        case input instanceof Uint16Array:
+            return Uint16Array;
+        case input instanceof Int32Array:
+            return Int32Array;
+        case input instanceof Uint32Array:
+            return Uint32Array;
+    }
+    return type;
+}
+
+function validate(input) {
+    if (!input || !input[Symbol.iterator]) {
+        input = Array.from(input);
+    }
+    return input;
 }
 
 class Chain {
