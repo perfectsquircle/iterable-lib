@@ -29,6 +29,12 @@ export function find(iterable, predicate = defaultCallback) {
   }
 }
 
+export function sort(iterable, compare) {
+  const copy = Array.from(iterable);
+  copy.sort(compare);
+  return copy;
+}
+
 export function reduce(iterable, callback = defaultCallback, initialValue) {
   let accumulator = initialValue;
   for (const element of iterable) {
@@ -37,8 +43,16 @@ export function reduce(iterable, callback = defaultCallback, initialValue) {
   return accumulator;
 }
 
-export function sort(iterable, compare) {
-  const copy = Array.from(iterable);
-  copy.sort(compare);
-  return copy;
+export function join(iterable, separator) {
+  return reduce(iterable, (acc, el) => acc + separator + el, "").trimRight(
+    separator
+  );
+}
+
+export function every(iterable, predicate) {
+  return reduce(iterable, (acc, el) => acc && predicate(el), false);
+}
+
+export function some(iterable, predicate) {
+  return reduce(iterable, (acc, el) => acc || predicate(el), false);
 }
