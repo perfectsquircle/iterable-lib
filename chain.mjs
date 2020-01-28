@@ -14,7 +14,7 @@ class Chain {
     }
     this.type = type;
   }
-  
+
   forEach(callback) {
     return chain(core.forEach(this.iterable, callback), this.type);
   }
@@ -26,6 +26,18 @@ class Chain {
   }
   sort(compare) {
     return chain(core.sort(this.iterable, compare), this.type);
+  }
+  take(count) {
+    return chain(core.take(this.iterable, count), this.type);
+  }
+  takeWhile(predicate) {
+    return chain(core.take(this.iterable, predicate), this.type);
+  }
+  skip(count) {
+    return core.skip(this.iterable, count);
+  }
+  skipWhile(count) {
+    return core.skipWhile(this.iterable, count);
   }
 
   find(callback) {
@@ -48,32 +60,7 @@ class Chain {
     return materialize(this.iterable, this.type);
   }
 
-  [Symbol.iterator]: function*() {
-    yield* this.collection;
+  *[Symbol.iterator]() {
+    yield* this.iterable;
   }
-};
-
-/*
-  flat() {}
-  flatMap() {}
-  includes(value) {
-    const el = this.find(el => Object.is(el, value));
-    return !Object.is(undefined);
-  }
-  keys() {}
-  reduceRight() {}
-
-  take(number) {}
-  takeWhile(number) {}
-  skip(number) {}
-  skipWhile(number) {}
-
-  nth() {}
-  first() {}
-  last() {}
-  head() {}
-  tail() {}
-
-  sortBy(predicate) {}
-
-  */
+}

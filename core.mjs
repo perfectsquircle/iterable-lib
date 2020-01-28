@@ -35,6 +35,52 @@ export function sort(iterable, compare) {
   return copy;
 }
 
+export function* take(iterable, count) {
+  for (let i = 0; i < count; i++) {
+    const next = iterable.next();
+    if (next.done) {
+      break;
+    }
+    yield next.value;
+  }
+}
+
+export function skip(iterable, count) {
+  for (let i = 0; i < count; i++) {
+    const next = iterable.next();
+    if (next.done) {
+      break;
+    }
+  }
+}
+
+export function* takeWhile(iterable, predicate) {
+  while (true) {
+    const next = iterable.next();
+    if (next.done) {
+      break;
+    }
+    const done = predicate(next.value);
+    if (done) {
+      break;
+    }
+    yield next.value;
+  }
+}
+
+export function skipWhile(iterable, predicate) {
+  while (true) {
+    const next = iterable.next();
+    if (next.done) {
+      break;
+    }
+    const done = predicate(next.value);
+    if (done) {
+      break;
+    }
+  }
+}
+
 export function reduce(iterable, callback = defaultCallback, initialValue) {
   let accumulator = initialValue;
   for (const element of iterable) {
@@ -55,4 +101,24 @@ export function every(iterable, predicate) {
 
 export function some(iterable, predicate) {
   return reduce(iterable, (acc, el) => acc || predicate(el), false);
+}
+
+export function nth(iterable, n) {
+  skip(iterable, n - 1);
+  return iterable.next().value;
+}
+
+export function first(iterable) {
+  return iterable.next().value;
+}
+
+export function last(iterable) {
+  let prev, next;
+  while (true) {
+    next = iterable.next();
+    if (next.done) {
+      return prev;
+    }
+    prev = next;
+  }
 }
