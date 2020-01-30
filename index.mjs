@@ -1,6 +1,6 @@
-import * as core from "./core";
-import { withIterable } from "./iterable";
-import chain from "./chain";
+import * as core from './core';
+import { withIterable } from './iterable';
+import chain from './chain';
 
 /**
  * forEach() calls a provided callback function once for each element in an iterable in ascending order.
@@ -24,48 +24,48 @@ export const some = core.some;
 export const nth = core.nth;
 export const first = core.first;
 export const last = core.last;
-export * from "./chain";
+export * from './chain';
 
-const simpleString = "The quick brown fox jumped over the lazy dog.";
+const simpleString = 'The quick brown fox jumped over the lazy dog.';
 const intArray = [1, 2, 3];
 const simpleTypedArray = new Uint8Array([0x00, 0xff]);
 const simpleMap = new Map([
-  ["a", 1],
-  ["b", 2],
-  ["c", 3]
+  ['a', 1],
+  ['b', 2],
+  ['c', 3]
 ]);
-const simpleSet = new Set([1, 2, 3]);
 
+/* eslint-disable no-console */
 {
   let result1 = chain(intArray)
     .filter(el => el === 3)
     .value();
-  console.log("Result 1: ", result1);
+  console.log('Result 1: ', result1);
 
   let result2 = chain(intArray)
     .map(el => el * 2)
     .filter(el => el > 3)
     .reduce((acc, el) => acc + el, 0);
-  console.log("Result 2: ", result2);
+  console.log('Result 2: ', result2);
 
   let result3 = chain(simpleString)
-    .filter(el => el !== "x")
+    .filter(el => el !== 'x')
     .value();
-  console.log("Result 3: ", result3);
+  console.log('Result 3: ', result3);
 
   let result4 = chain(simpleMap)
-    .filter(el => el[0] === "a")
-    .map(el => [el[0], "yeesh"])
+    .filter(el => el[0] === 'a')
+    .map(el => [el[0], 'yeesh'])
     .value();
-  console.log("Result 4: ", result4);
+  console.log('Result 4: ', result4);
 
   let result5 = chain(simpleString)
     .sort()
     .value();
-  console.log("Result 5: ", result5);
+  console.log('Result 5: ', result5);
 }
 
 {
   let result1 = filter(simpleTypedArray, el => el === 0x00);
-  console.log("Result 1: ", result1, result1 instanceof Uint8Array);
+  console.log('Result 1: ', result1, result1 instanceof Uint8Array);
 }

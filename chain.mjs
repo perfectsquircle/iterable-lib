@@ -1,5 +1,5 @@
-import * as core from "./core";
-import { getType, normalize, materialize } from "./iterable";
+import * as core from './core';
+import { getType, normalize, materialize } from './iterable';
 
 export default function chain(iterable, type) {
   return new Chain(iterable, type);

@@ -36,46 +36,44 @@ export function sort(iterable, compare) {
 }
 
 export function* take(iterable, count) {
-  for (let i = 0; i < count; i++) {
-    const next = iterable.next();
-    if (next.done) {
-      break;
+  if (count <= 0) {
+    return;
+  }
+  let i = 0;
+  for (const element of iterable) {
+    if (i++ < count) {
+      yield element;
     }
-    yield next.value;
   }
 }
 
 export function skip(iterable, count) {
-  for (let i = 0; i < count; i++) {
-    const next = iterable.next();
-    if (next.done) {
-      break;
+  if (count <= 0) {
+    return;
+  }
+  let i = 0;
+  // eslint-disable-next-line no-unused-vars
+  for (const element of iterable) {
+    if (i++ >= count) {
+      return;
     }
   }
 }
 
 export function* takeWhile(iterable, predicate) {
-  while (true) {
-    const next = iterable.next();
-    if (next.done) {
+  for (const element of iterable) {
+    const take = predicate(element);
+    if (!take) {
       break;
     }
-    const done = predicate(next.value);
-    if (done) {
-      break;
-    }
-    yield next.value;
+    yield element;
   }
 }
 
 export function skipWhile(iterable, predicate) {
-  while (true) {
-    const next = iterable.next();
-    if (next.done) {
-      break;
-    }
-    const done = predicate(next.value);
-    if (done) {
+  for (const element of iterable) {
+    const skip = predicate(element);
+    if (!skip) {
       break;
     }
   }
@@ -90,7 +88,7 @@ export function reduce(iterable, callback = defaultCallback, initialValue) {
 }
 
 export function join(iterable, separator) {
-  return reduce(iterable, (acc, el) => acc + separator + el, "").trimRight(
+  return reduce(iterable, (acc, el) => acc + separator + el, '').trimRight(
     separator
   );
 }
@@ -113,12 +111,9 @@ export function first(iterable) {
 }
 
 export function last(iterable) {
-  let prev, next;
-  while (true) {
-    next = iterable.next();
-    if (next.done) {
-      return prev;
-    }
-    prev = next;
+  let last;
+  for (const element of iterable) {
+    last = element;
   }
+  return last;
 }
